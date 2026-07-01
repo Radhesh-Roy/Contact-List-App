@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:contact_app/database/database.dart';
+import 'package:contact_app/model/contact_model.dart';
 import 'package:flutter/material.dart';
 
 class ContactViewPage extends StatefulWidget {
@@ -8,9 +12,28 @@ class ContactViewPage extends StatefulWidget {
 }
 
 class _ContactViewPageState extends State<ContactViewPage> {
+  List<ContactModel>contacts=[];
   final formKey=GlobalKey<FormState>();
   TextEditingController nameC = TextEditingController();
   TextEditingController phoneC = TextEditingController();
+
+  Future<void>getContact()async{
+    contacts= await ContactDatabase.getContact();
+    setState(() {
+
+    });
+  }
+  Future<void> addContact()async{
+    await ContactDatabase.insertData(ContactModel(name: nameC.text, phone: phoneC.text));
+    await getContact();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getContact();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +79,8 @@ class _ContactViewPageState extends State<ContactViewPage> {
               InkWell(
                 onTap: (){
                   if(formKey.currentState!.validate()){
+                    getContact();
+                    log("radhesh");
 
                   }
                 },
@@ -75,18 +100,18 @@ class _ContactViewPageState extends State<ContactViewPage> {
               SizedBox(height: 10,),
               Expanded(
                 child: ListView.builder(
-                  itemCount: 5,
+                  itemCount: contacts.length,
                   itemBuilder: (context, index) {
                   return Card(
                     color: Color(0xffF2F3F4),
                     elevation: 0.5,
                     child: ListTile(
-                      title: Text("Radhesh Roy", style: TextStyle(color: Colors.red, fontSize: 17, fontWeight: FontWeight.w400),),
+                      title: Text("${contacts[index].name}", style: TextStyle(color: Colors.red, fontSize: 17, fontWeight: FontWeight.w400),),
                       leading: CircleAvatar(
                         backgroundColor: Color(0xffF2F3F4),
                         child: Icon(Icons.person, size: 35,),
                       ),
-                      subtitle: Text("01789391948", style: TextStyle(color: Colors.grey, fontSize: 17, fontWeight: FontWeight.w400),),
+                      subtitle: Text("${contacts[index].phone}", style: TextStyle(color: Colors.grey, fontSize: 17, fontWeight: FontWeight.w400),),
                       trailing: Icon(Icons.phone, color: Colors.blue,),
                     ),
                   );
