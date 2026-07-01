@@ -77,11 +77,12 @@ class _ContactViewPageState extends State<ContactViewPage> {
               ),
               SizedBox(height: 10,),
               InkWell(
-                onTap: (){
+                onTap: ()async{
                   if(formKey.currentState!.validate()){
-                    getContact();
+                    await addContact();
+                    nameC.clear();
+                    phoneC.clear();
                     log("radhesh");
-
                   }
                 },
                 child: Container(
